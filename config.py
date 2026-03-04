@@ -18,15 +18,15 @@ INFO_PAGO = """
 💳 *Instrucciones de Pago — Cuota Mensual: 250 CUP*
 
 Puedes pagar por:
-• *Transfermóvil:* Envía a XXXXXXXX (pon tu número aquí)
-• *EnZona:* Tarjeta XXXX-XXXX-XXXX-XXXX (pon tu tarjeta aquí)
+• *Transfermóvil:* 9205069991089805
+• *EnZona:* 9205069991089805
 
 Después de pagar:
 1. Toma foto del comprobante
 2. Envíala aquí mismo en el chat
 3. El admin confirmará en menos de 24 horas
 
-¿Dudas? Escribe al admin: @TU_USUARIO_AQUI
+¿Dudas? Escribe al admin: @yoanosiel_98
 """
 
 # ─────────────────────────────────────────────────────────────
