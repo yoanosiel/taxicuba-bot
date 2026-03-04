@@ -151,8 +151,9 @@ async def confirmar_registro(update: Update, context: ContextTypes.DEFAULT_TYPE)
         "✅ *¡Registro enviado!*\n\n"
         "Tu solicitud está *pendiente de aprobación*.\n"
         "El admin revisará tu registro y te avisará pronto.\n\n"
-        "Una vez aprobado, te indicaremos cómo unirte al canal de tu provincia "
-        "donde aparecerán los viajes disponibles.",
+        "Una vez aprobado recibirás los viajes "
+        "disponibles directamente aquí en este chat.",
+            
         parse_mode="Markdown"
     )
 
