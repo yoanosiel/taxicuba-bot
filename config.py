@@ -1,38 +1,21 @@
-"""
-Configuración de TaxiCuba Bot
-IMPORTANTE: Edita este archivo con tus datos reales antes de subir el bot
-"""
-
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
-# ─────────────────────────────────────────────────────────────
-# TU ID DE ADMINISTRADOR EN TELEGRAM
-# Para saber tu ID: escríbele a @userinfobot en Telegram
-# ─────────────────────────────────────────────────────────────
-ADMIN_ID = int(os.environ.get("ADMIN_ID", "0"))
+ADMIN_ID = 1191730649
+PRECIO_MINIMO_CUP = 50
+CUOTA_MENSUAL_CUP = 250
+MINUTOS_EXPIRACION_VIAJE = 30
+DIAS_AVISO_CUOTA = 3
 
-# ─────────────────────────────────────────────────────────────
-# INFORMACIÓN DE PAGO (que ven los choferes al escribir /pagar)
-# ─────────────────────────────────────────────────────────────
-INFO_PAGO = """
-💳 *Instrucciones de Pago — Cuota Mensual: 250 CUP*
-
-Puedes pagar por:
-• *Transfermóvil:* 9205069991089805
-• *EnZona:* 9205069991089805
-
-Después de pagar:
-1. Toma foto del comprobante
-2. Envíala aquí mismo en el chat
-3. El admin confirmará en menos de 24 horas
-
-¿Dudas? Escribe al admin: @yoanosiel_98
-"""
-
-# ─────────────────────────────────────────────────────────────
-# REGLAS DEL SISTEMA
-# ─────────────────────────────────────────────────────────────
-PRECIO_MINIMO_CUP = 50          # Precio mínimo que puede ofrecer un cliente
-CUOTA_MENSUAL_CUP = 250         # Cuota mensual de los choferes
-MINUTOS_EXPIRACION_VIAJE = 30   # Minutos antes de que un viaje expire sin chofer
-DIAS_AVISO_CUOTA = 3            # Días antes del vencimiento para avisar al chofer
+INFO_PAGO = (
+    "💳 Instrucciones de Pago — Cuota Mensual: 250 CUP\n\n"
+    "Puedes pagar por:\n"
+    "• Transfermovil: Envia a 9205-0699-9108-9805\n"
+    "• EnZona: Tarjeta 9205-0699-9108-9805\n\n"
+    "Despues de pagar:\n"
+    "1. Toma foto del comprobante\n"
+    "2. Enviala aqui mismo en el chat\n"
+    "3. El admin confirmara en menos de 24 horas\n\n"
+    "Dudas? Escribe al admin: @yoanosiel_98"
+)

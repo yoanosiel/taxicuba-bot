@@ -23,20 +23,20 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"📍 Zona: {chofer['municipio']}, {chofer['provincia']}\n"
                 f"⭐ Valoración: {chofer['rating']}/5.0\n\n"
                 f"Estás suscrito al canal de tu provincia. Los viajes llegarán allí.",
-                parse_mode="Markdown"
+                
             )
         elif estado == 'pendiente':
             await update.message.reply_text(
                 "⏳ Tu registro está *pendiente de aprobación*.\n\n"
                 "El administrador revisará tu solicitud pronto. "
                 "Te avisaremos cuando tu cuenta esté activa.",
-                parse_mode="Markdown"
+                
             )
         elif estado == 'suspendido':
             await update.message.reply_text(
                 "⛔ Tu cuenta está *suspendida*.\n\n"
                 "Esto puede ser por cuota vencida. Escribe /pagar para renovar.",
-                parse_mode="Markdown"
+                
             )
         return
 
@@ -47,7 +47,7 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"👋 Bienvenido de nuevo!\n\n"
             f"Para pedir un taxi escribe /viaje\n"
             f"Para ver tu perfil escribe /perfil",
-            parse_mode="Markdown"
+            
         )
         return
 
@@ -63,5 +63,5 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "El sistema de transporte privado más fácil de Cuba.\n\n"
         "¿Cómo quieres registrarte?",
         reply_markup=reply_markup,
-        parse_mode="Markdown"
+        
     )

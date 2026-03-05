@@ -27,7 +27,7 @@ async def inicio_chofer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🚗 *Registro de Chofer*\n\n"
         "Vamos paso a paso. Puedes cancelar en cualquier momento escribiendo /cancelar\n\n"
         "Paso 1/5: ¿Cuál es tu *nombre completo*?",
-        parse_mode="Markdown"
+        
     )
     return NOMBRE
 
@@ -42,7 +42,7 @@ async def recibir_nombre(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"✅ Nombre: *{nombre}*\n\n"
         f"Paso 2/5: ¿Cuál es tu número de *teléfono*? (8 dígitos, ej: 55123456)",
-        parse_mode="Markdown"
+        
     )
     return TELEFONO
 
@@ -63,7 +63,7 @@ async def recibir_telefono(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Paso 3/5: ¿En qué *provincia* operas?",
         reply_markup=markup,
-        parse_mode="Markdown"
+        
     )
     return PROVINCIA
 
@@ -83,7 +83,7 @@ async def recibir_provincia(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Paso 4/5: ¿En qué *municipio* de {provincia} operas?",
         reply_markup=markup,
-        parse_mode="Markdown"
+        
     )
     return MUNICIPIO
 
@@ -101,7 +101,7 @@ async def recibir_municipio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Paso 5/5: Describe tu *vehículo* (marca, modelo, color)\n"
         "Ejemplo: _Lada 2107, azul_ o _Geely CK, blanco_",
         reply_markup=ReplyKeyboardRemove(),
-        parse_mode="Markdown"
+        
     )
     return VEHICULO
 
@@ -130,7 +130,7 @@ async def recibir_vehiculo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"💰 Cuota mensual: *250 CUP*\n\n"
         "¿Todo correcto?",
         reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
+        
     )
     return CONFIRMAR
 
@@ -154,7 +154,7 @@ async def confirmar_registro(update: Update, context: ContextTypes.DEFAULT_TYPE)
         "Una vez aprobado recibirás los viajes "
         "disponibles directamente aquí en este chat.",
             
-        parse_mode="Markdown"
+        
     )
 
     # Notificar al admin
@@ -174,7 +174,7 @@ async def confirmar_registro(update: Update, context: ContextTypes.DEFAULT_TYPE)
             f"🚗 {d['vehiculo']}\n"
             f"🔗 Telegram: @{user.username or 'sin_usuario'} (ID: {user.id})",
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="Markdown"
+            
         )
 
     return ConversationHandler.END

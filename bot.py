@@ -4,6 +4,8 @@ Autor: Generado automáticamente
 """
 
 import logging
+from dotenv import load_dotenv
+load_dotenv()
 import os
 from telegram import Update
 from telegram.ext import (

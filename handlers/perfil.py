@@ -26,7 +26,7 @@ async def perfil_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚖 Viajes realizados: {chofer['viajes_total']}\n"
             f"📅 Último pago: {chofer['fecha_pago'] or 'No registrado'}\n\n"
             f"_Para renovar tu cuota escribe /pagar_",
-            parse_mode="Markdown"
+            
         )
         return
 
@@ -39,7 +39,7 @@ async def perfil_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"⭐ Valoración: {cliente['rating']}/5.0\n"
             f"🚖 Viajes realizados: {cliente['viajes_total']}\n\n"
             f"_Para pedir un taxi escribe /viaje_",
-            parse_mode="Markdown"
+            
         )
         return
 

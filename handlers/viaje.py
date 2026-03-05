@@ -64,7 +64,7 @@ async def chofer_acepta_viaje(update: Update, context: ContextTypes.DEFAULT_TYPE
             f"Ya puedes coordinar los detalles directamente con el chofer.\n"
             f"Cuando termines el viaje presiona el botón de abajo:",
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="Markdown"
+            
         )
     except Exception as e:
         print(f"Error notificando al cliente: {e}")
@@ -77,7 +77,7 @@ async def chofer_acepta_viaje(update: Update, context: ContextTypes.DEFAULT_TYPE
         f"👥 *Pasajeros:* {viaje['pasajeros']}   🧳 Equipaje: {equipaje_txt}\n"
         f"💰 *Precio acordado:* {viaje['precio_oferta']} CUP\n\n"
         f"El cliente ya tiene tu información. ¡Buen viaje! 🚗",
-        parse_mode="Markdown"
+        
     )
 
     # Avisar a los DEMÁS choferes de la provincia que el viaje fue tomado
@@ -91,7 +91,7 @@ async def chofer_acepta_viaje(update: Update, context: ContextTypes.DEFAULT_TYPE
                 f"ℹ️ El viaje *#{viaje_id}* "
                 f"({viaje['municipio_origen']} → {viaje['destino']}) "
                 f"ya fue tomado por otro chofer.",
-                parse_mode="Markdown"
+                
             )
         except Exception:
             pass
@@ -127,7 +127,7 @@ async def procesar_valoracion(update: Update, context: ContextTypes.DEFAULT_TYPE
             "✅ *¡Viaje marcado como completado!*\n\n"
             "¿Cómo valorarías al chofer?",
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="Markdown"
+            
         )
 
 
@@ -146,5 +146,5 @@ async def guardar_estrella(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             f"{'⭐' * estrellas} *¡Gracias por tu valoración!*\n\n"
             f"Ayudas a mejorar el servicio para todos.",
-            parse_mode="Markdown"
+            
         )

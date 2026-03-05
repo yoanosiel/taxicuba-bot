@@ -42,7 +42,7 @@ async def admin_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"📅 Viajes este mes: {stats['viajes_mes']}\n"
         f"💰 Ingresos estimados: {stats['ingresos_mes']} CUP",
         reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
+        
     )
 
 
@@ -63,7 +63,7 @@ async def aprobar_chofer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer("✅ Chofer aprobado.")
     await query.edit_message_text(
         query.message.text + f"\n\n✅ *APROBADO por admin*",
-        parse_mode="Markdown"
+        
     )
 
     # Notificar al chofer
@@ -78,7 +78,7 @@ async def aprobar_chofer(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"para recibir las solicitudes de viaje.\n\n"
             f"Recuerda que tu cuota mensual es de *250 CUP*. "
             f"Escribe /pagar cuando necesites renovar.",
-            parse_mode="Markdown"
+            
         )
     except Exception as e:
         print(f"Error notificando al chofer aprobado: {e}")
@@ -95,7 +95,7 @@ async def rechazar_chofer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer("Chofer rechazado.")
     await query.edit_message_text(
         query.message.text + f"\n\n❌ *RECHAZADO por admin*",
-        parse_mode="Markdown"
+        
     )
 
     try:
@@ -103,7 +103,7 @@ async def rechazar_chofer(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chofer_id,
             "❌ *Tu solicitud de registro fue rechazada.*\n\n"
             "Si crees que es un error, comunícate con el administrador.",
-            parse_mode="Markdown"
+            
         )
     except Exception:
         pass
@@ -122,7 +122,7 @@ async def confirmar_pago(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chofer = get_chofer(chofer_id)
     await query.edit_message_text(
         query.message.text + f"\n\n✅ *PAGO CONFIRMADO* — Cuenta activada",
-        parse_mode="Markdown"
+        
     )
 
     try:
@@ -131,7 +131,7 @@ async def confirmar_pago(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "✅ *¡Pago confirmado!*\n\n"
             "Tu cuenta está activa por los próximos 30 días.\n"
             "¡A trabajar! 🚗",
-            parse_mode="Markdown"
+            
         )
     except Exception:
         pass

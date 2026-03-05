@@ -42,7 +42,7 @@ async def inicio_cliente(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user.id,
         "📍 *Paso 1/6:* ¿En qué *provincia* te encuentras?",
         reply_markup=markup,
-        parse_mode="Markdown"
+        
     )
     return PROV_CLIENTE
 
@@ -65,7 +65,7 @@ async def viaje_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📍 *Paso 1/6:* ¿En qué *provincia* te encuentras?",
         reply_markup=markup,
-        parse_mode="Markdown"
+        
     )
     return PROV_CLIENTE
 
@@ -85,7 +85,7 @@ async def recibir_provincia(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"📍 *Paso 2/6:* ¿En qué *municipio* te recogen?",
         reply_markup=markup,
-        parse_mode="Markdown"
+        
     )
     return MUNIC_ORIGEN
 
@@ -103,7 +103,7 @@ async def recibir_municipio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "_(calle, número, entre qué calles)_\n"
         "Ejemplo: _Calle 23 #456 e/ L y M, Vedado_",
         reply_markup=ReplyKeyboardRemove(),
-        parse_mode="Markdown"
+        
     )
     return DIR_ORIGEN
 
@@ -119,7 +119,7 @@ async def recibir_direccion(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🏁 *Paso 4/6:* ¿A dónde vas? Escribe el *destino*\n"
         "_(municipio o dirección de destino)_",
-        parse_mode="Markdown"
+        
     )
     return DESTINO
 
@@ -138,7 +138,7 @@ async def recibir_destino(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "👥 *Paso 5/6:* ¿Cuántos pasajeros van?",
         reply_markup=markup,
-        parse_mode="Markdown"
+        
     )
     return PASAJEROS
 
@@ -161,7 +161,7 @@ async def recibir_pasajeros(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🧳 *Paso 6/6:* ¿Llevas equipaje grande?",
         reply_markup=markup,
-        parse_mode="Markdown"
+        
     )
     return EQUIPAJE
 
@@ -176,7 +176,7 @@ async def recibir_equipaje(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Escribe solo el número, sin letras.\n"
         "Ejemplo: _250_",
         reply_markup=ReplyKeyboardRemove(),
-        parse_mode="Markdown"
+        
     )
     return PRECIO
 
@@ -214,7 +214,7 @@ async def recibir_precio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"💰 Oferta: *{d['precio']} CUP*\n\n"
         "¿Publicamos el viaje?",
         reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
+        
     )
     return PUBLICAR
 
@@ -263,7 +263,7 @@ async def publicar_viaje(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chofer['telegram_id'],
                 texto_notif,
                 reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode="Markdown"
+                
             )
             notificados += 1
         except Exception as e:
@@ -276,7 +276,7 @@ async def publicar_viaje(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"disponible{'s' if notificados != 1 else ''} en *{d['provincia']}*.\n\n"
         f"Te avisaremos cuando alguien acepte.\n"
         f"⏰ Expira en 30 minutos si nadie acepta.",
-        parse_mode="Markdown"
+        
     )
 
     context.user_data.clear()
