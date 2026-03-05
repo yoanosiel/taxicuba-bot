@@ -1,87 +1,92 @@
-"""
-Tareas automáticas del bot:
-- Expirar viajes sin chofer después de 30 minutos
-- Avisar a choferes con cuota próxima a vencer
-- Suspender choferes con cuota vencida
-"""
-
-import logging
-from telegram.ext import Application
-from database import get_viajes_expirados, actualizar_viaje, get_choferes_cuota_vencida, suspender_chofer
-
-logger = logging.getLogger(__name__)
+from datetime import datetime, timedelta
+from database import get_conn
 
 
 async def expirar_viajes(context):
-    """Expira viajes que llevan más de 30 minutos sin chofer"""
-    try:
-        viajes = get_viajes_expirados()
-        for viaje in viajes:
-            actualizar_viaje(viaje['id'], estado='expirado')
+    """Expira viajes sin chofer despues de 30 minutos"""
+    conn = get_conn()
+    viajes = conn.execute("""
+        SELECT * FROM viajes WHERE estado='publicado'
+        AND datetime(fecha_creacion, '+30 minutes') < datetime('now')
+    """).fetchall()
+    conn.close()
 
-            # Editar mensaje en el canal
-            if viaje.get('canal_id') and viaje.get('mensaje_id'):
-                try:
-                    await context.bot.edit_message_text(
-                        chat_id=viaje['canal_id'],
-                        message_id=viaje['mensaje_id'],
-                        text=(
-                            f"⏰ *VIAJE #{viaje['id']} — EXPIRADO*\n\n"
-                            f"📍 {viaje['direccion_origen']} → {viaje['destino']}\n"
-                            f"_Nadie aceptó este viaje en 30 minutos_"
-                        ),
-                        parse_mode="Markdown"
-                    )
-                except Exception as e:
-                    logger.warning(f"No se pudo editar mensaje expirado: {e}")
+    for v in viajes:
+        v = dict(v)
+        conn = get_conn()
+        conn.execute("UPDATE viajes SET estado='expirado' WHERE id=?", (v['id'],))
+        conn.commit()
+        conn.close()
+        try:
+            await context.bot.send_message(
+                v['cliente_id'],
+                f"Tu viaje #{v['id']} expiro sin que ningun chofer lo aceptara.\n"
+                f"Puedes publicar uno nuevo con /viaje."
+            )
+        except Exception as e:
+            print(f"Error notificando expiracion: {e}")
 
-            # Notificar al cliente
+
+async def revisar_pagos(context):
+    """Suspende choferes con pago vencido y avisa 3 dias antes"""
+    conn = get_conn()
+    choferes = conn.execute("""
+        SELECT * FROM choferes WHERE estado='activo'
+    """).fetchall()
+    conn.close()
+
+    hoy = datetime.now()
+
+    for c in choferes:
+        c = dict(c)
+        if not c.get('fecha_pago'):
+            continue
+
+        fecha_pago = datetime.fromisoformat(c['fecha_pago'])
+        dias_activo = (hoy - fecha_pago).days
+        dias_restantes = 30 - dias_activo
+
+        # Suspender si vencio
+        if dias_restantes <= 0:
+            conn = get_conn()
+            conn.execute("""
+                UPDATE choferes SET estado='pendiente_pago'
+                WHERE telegram_id=?
+            """, (c['telegram_id'],))
+            conn.commit()
+            conn.close()
             try:
                 await context.bot.send_message(
-                    viaje['cliente_id'],
-                    f"⏰ *Tu viaje #{viaje['id']} expiró*\n\n"
-                    f"Ningún chofer aceptó en 30 minutos.\n"
-                    f"Puedes intentar de nuevo con /viaje, "
-                    f"quizás con un precio un poco mayor.",
-                    parse_mode="Markdown"
+                    c['telegram_id'],
+                    "Tu cuota mensual ha vencido.\n\n"
+                    "Tu cuenta esta suspendida temporalmente y no recibiras "
+                    "nuevos viajes hasta que renueves.\n\n"
+                    "Escribe /pagar para renovar tu cuota de 250 CUP y "
+                    "volver a recibir viajes."
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"Error suspendiendo chofer: {e}")
 
-            logger.info(f"Viaje #{viaje['id']} expirado.")
-    except Exception as e:
-        logger.error(f"Error en job expirar_viajes: {e}")
-
-
-async def revisar_cuotas(context):
-    """Suspende choferes con cuota vencida y les avisa"""
-    try:
-        choferes_vencidos = get_choferes_cuota_vencida()
-        for chofer in choferes_vencidos:
-            suspender_chofer(chofer['telegram_id'])
+        # Avisar 3 dias antes
+        elif dias_restantes == 3:
             try:
                 await context.bot.send_message(
-                    chofer['telegram_id'],
-                    f"⛔ *Tu cuenta ha sido suspendida*\n\n"
-                    f"Tu cuota mensual de 250 CUP ha vencido.\n"
-                    f"Escribe /pagar para renovar y volver a recibir viajes.",
-                    parse_mode="Markdown"
+                    c['telegram_id'],
+                    f"Tu cuota vence en 3 dias.\n\n"
+                    f"Para no perder el acceso a los viajes renueva "
+                    f"antes del vencimiento.\n\n"
+                    f"Escribe /pagar para renovar tu cuota de 250 CUP."
                 )
-            except Exception:
-                pass
-            logger.info(f"Chofer {chofer['nombre']} suspendido por cuota vencida.")
-    except Exception as e:
-        logger.error(f"Error en job revisar_cuotas: {e}")
+            except Exception as e:
+                print(f"Error avisando vencimiento: {e}")
 
-
-def setup_jobs(app: Application):
-    """Registra las tareas automáticas"""
-    jq = app.job_queue
-
-    # Revisar viajes expirados cada 5 minutos
-    jq.run_repeating(expirar_viajes, interval=300, first=60)
-
-    # Revisar cuotas vencidas una vez al día (a las 8 AM)
-    jq.run_daily(revisar_cuotas, time=__import__('datetime').time(8, 0))
-
-    logger.info("Tareas automáticas configuradas.")
+        # Avisar 1 dia antes
+        elif dias_restantes == 1:
+            try:
+                await context.bot.send_message(
+                    c['telegram_id'],
+                    "Tu cuota vence MAÑANA.\n\n"
+                    "Escribe /pagar ahora para no quedarte sin servicio."
+                )
+            except Exception as e:
+                print(f"Error avisando vencimiento: {e}")

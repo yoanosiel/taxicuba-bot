@@ -286,3 +286,37 @@ def get_estadisticas():
         "SELECT COUNT(*)*250 FROM pagos WHERE strftime('%Y-%m',fecha_pago)=strftime('%Y-%m','now')").fetchone()[0]
     conn.close()
     return stats
+
+
+def aprobar_chofer(telegram_id: int):
+    """Aprueba chofer pero lo deja en pendiente_pago hasta que pague"""
+    conn = get_conn()
+    conn.execute("""
+        UPDATE choferes SET estado='pendiente_pago'
+        WHERE telegram_id=?
+    """, (telegram_id,))
+    conn.commit()
+    conn.close()
+
+
+def rechazar_chofer(telegram_id: int):
+    conn = get_conn()
+    conn.execute("UPDATE choferes SET estado='rechazado' WHERE telegram_id=?", (telegram_id,))
+    conn.commit()
+    conn.close()
+
+
+def confirmar_pago_chofer(telegram_id: int):
+    """Confirma pago y activa chofer por 30 dias"""
+    from datetime import datetime
+    conn = get_conn()
+    conn.execute("""
+        UPDATE choferes SET estado='activo', fecha_pago=?
+        WHERE telegram_id=?
+    """, (datetime.now().isoformat(), telegram_id))
+    conn.execute("""
+        INSERT INTO pagos (chofer_id, monto, fecha_pago, mes_pagado, confirmado_por)
+        VALUES (?, 250, ?, ?, 'admin')
+    """, (telegram_id, datetime.now().isoformat(), datetime.now().strftime("%Y-%m")))
+    conn.commit()
+    conn.close()
