@@ -22,7 +22,7 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"🚗 Vehículo: {chofer['vehiculo']}\n"
                 f"📍 Zona: {chofer['municipio']}, {chofer['provincia']}\n"
                 f"⭐ Valoración: {chofer['rating']}/5.0\n\n"
-                f"Estás suscrito al canal de tu provincia. Los viajes llegarán allí.",
+                f"Los viajes te llegarán directamente aquí en este chat.",
                 
             )
         elif estado == 'pendiente':

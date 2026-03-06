@@ -90,3 +90,10 @@ async def revisar_pagos(context):
                 )
             except Exception as e:
                 print(f"Error avisando vencimiento: {e}")
+
+
+def setup_jobs(app):
+    """Configura las tareas programadas"""
+    job_queue = app.job_queue
+    job_queue.run_repeating(expirar_viajes, interval=300, first=10)
+    job_queue.run_repeating(revisar_pagos, interval=86400, first=60)

@@ -103,7 +103,11 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chofer_id = int(data.split("_")[2])
         fecha_vence = (datetime.now() + timedelta(days=30)).strftime("%d/%m/%Y")
         confirmar_pago_chofer(chofer_id)
-        await query.edit_message_text(f"Pago confirmado. Chofer activo hasta {fecha_vence}.")
+        try:
+            await query.edit_message_caption(caption=f"Pago confirmado. Chofer activo hasta {fecha_vence}.")
+        except:
+            await query.edit_message_text(f"Pago confirmado. Chofer activo hasta {fecha_vence}.")
+        print(f"Intentando notificar al chofer {chofer_id}")
         try:
             await context.bot.send_message(
                 chofer_id,
