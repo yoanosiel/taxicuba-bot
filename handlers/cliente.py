@@ -237,7 +237,9 @@ async def publicar_viaje(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     equipaje_txt = "Sí 🧳" if d['equipaje'] else "No 🎒"
-    hora = datetime.now().strftime("%I:%M %p")
+    from datetime import timezone, timedelta
+    cuba_tz = timezone(timedelta(hours=-5))
+    hora = datetime.now(cuba_tz).strftime("%I:%M %p")
     username_link = f"@{user.username}" if user.username else f"[Contactar](tg://user?id={user.id})"
 
     texto_notif = (

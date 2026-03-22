@@ -136,7 +136,7 @@ def registrar_pago_chofer(telegram_id, confirmado_por):
 
 def get_choferes_pendientes():
     conn = get_conn()
-    rows = conn.execute("SELECT * FROM choferes WHERE estado='pendiente_pago'").fetchall()
+    rows = conn.execute("SELECT * FROM choferes WHERE estado='pendiente' OR estado='pendiente_pago'").fetchall()
     conn.close()
     return [dict(r) for r in rows]
 
@@ -277,7 +277,7 @@ def get_estadisticas():
     stats['choferes_activos'] = conn.execute(
         "SELECT COUNT(*) FROM choferes WHERE estado='activo'").fetchone()[0]
     stats['choferes_pendientes'] = conn.execute(
-        "SELECT COUNT(*) FROM choferes WHERE estado='pendiente_pago'").fetchone()[0]
+        "SELECT COUNT(*) FROM choferes WHERE estado='pendiente' OR estado='pendiente_pago'").fetchone()[0]
     stats['viajes_hoy'] = conn.execute(
         "SELECT COUNT(*) FROM viajes WHERE date(fecha_creacion)=date('now')").fetchone()[0]
     stats['viajes_mes'] = conn.execute(

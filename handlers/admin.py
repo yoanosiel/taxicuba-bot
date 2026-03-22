@@ -22,7 +22,8 @@ def solo_admin(func):
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     conn = get_conn()
     activos = conn.execute("SELECT COUNT(*) FROM choferes WHERE estado='activo'").fetchone()[0]
-    pendientes = conn.execute("SELECT COUNT(*) FROM choferes WHERE estado='pendiente_pago'").fetchone()[0]
+    pendientes = conn.execute("SELECT COUNT(*) FROM choferes WHERE estado='pendiente' OR estado='pendiente_pago'").fetchone()[0]
+    print(f"DEBUG pendientes: {pendientes}")
     viajes_hoy = conn.execute("SELECT COUNT(*) FROM viajes WHERE date(fecha_creacion)=date('now')").fetchone()[0]
     viajes_mes = conn.execute("SELECT COUNT(*) FROM viajes WHERE strftime('%Y-%m', fecha_creacion)=strftime('%Y-%m', 'now')").fetchone()[0]
     ingresos = conn.execute("SELECT COUNT(*)*250 FROM pagos WHERE confirmado_por IS NOT NULL AND strftime('%Y-%m', fecha_pago)=strftime('%Y-%m', 'now')").fetchone()[0]
@@ -74,7 +75,10 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith("aprobar_"):
         chofer_id = int(data.split("_")[1])
         aprobar_chofer(chofer_id)
-        await query.edit_message_text("Chofer aprobado. Esperando confirmacion de pago.")
+        try:
+            await query.edit_message_text("Chofer aprobado. Esperando confirmacion de pago.")
+        except:
+            await query.answer("Chofer aprobado.")
         try:
             await context.bot.send_message(
                 chofer_id,
