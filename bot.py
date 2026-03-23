@@ -19,6 +19,7 @@ from handlers.admin import admin_panel as admin_handler, admin_callback
 from handlers.pagar import pagar_handler, recibir_comprobante
 from handlers.perfil import perfil_handler
 from handlers.viaje import chofer_acepta_viaje, procesar_valoracion, guardar_estrella
+from handlers.embajador import embajador_handler
 from jobs import setup_jobs
 
 logging.basicConfig(
@@ -45,6 +46,7 @@ def main():
     app.add_handler(CommandHandler("pagar", pagar_handler))
     app.add_handler(CommandHandler("perfil", perfil_handler))
     app.add_handler(CommandHandler("ayuda", start_handler))
+    app.add_handler(CommandHandler("embajador", embajador_handler))
 
     # Callbacks de botones inline
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^admin_"))

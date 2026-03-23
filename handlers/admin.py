@@ -2,7 +2,8 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from database import (
     get_choferes_pendientes, aprobar_chofer, rechazar_chofer,
-    get_conn, confirmar_pago_chofer
+    get_conn, confirmar_pago_chofer, get_chofer,
+    es_primer_pago_chofer, acreditar_comision, get_embajador_por_codigo
 )
 from config import ADMIN_ID
 from datetime import datetime, timedelta
@@ -107,6 +108,25 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chofer_id = int(data.split("_")[2])
         fecha_vence = (datetime.now() + timedelta(days=30)).strftime("%d/%m/%Y")
         confirmar_pago_chofer(chofer_id)
+
+        # Acreditar comision al embajador si aplica
+        chofer = get_chofer(chofer_id)
+        if chofer and chofer.get('referido_por'):
+            embajador = get_embajador_por_codigo(chofer['referido_por'])
+            if embajador:
+                primer_pago = es_primer_pago_chofer(chofer_id)
+                comision = 250 if primer_pago else 50
+                acreditar_comision(embajador['telegram_id'], comision)
+                try:
+                    await context.bot.send_message(
+                        embajador['telegram_id'],
+                        f"Tienes una nueva comision de {comision} CUP\n"
+                        f"por el chofer que referiste.\n"
+                        f"Escribe /embajador para ver tu saldo."
+                    )
+                except:
+                    pass
+
         try:
             await query.edit_message_caption(caption=f"Pago confirmado. Chofer activo hasta {fecha_vence}.")
         except:

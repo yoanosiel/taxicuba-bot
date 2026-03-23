@@ -76,6 +76,15 @@ def init_db():
             confirmado_por  INTEGER,
             FOREIGN KEY(chofer_id) REFERENCES choferes(telegram_id)
         );
+
+        CREATE TABLE IF NOT EXISTS embajadores (
+            telegram_id     INTEGER PRIMARY KEY,
+            nombre          TEXT NOT NULL,
+            codigo          TEXT UNIQUE NOT NULL,
+            fecha_registro  TEXT,
+            saldo           REAL DEFAULT 0,
+            total_ganado    REAL DEFAULT 0
+        );
     """)
 
     conn.commit()
