@@ -107,10 +107,12 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith("admin_pago_"):
         chofer_id = int(data.split("_")[2])
         fecha_vence = (datetime.now() + timedelta(days=30)).strftime("%d/%m/%Y")
-        confirmar_pago_chofer(chofer_id)
+        # Detectar si es referido para dar 60 dias
+        chofer = get_chofer(chofer_id)
+        dias = 60 if (chofer and chofer.get('referido_por') and es_primer_pago_chofer(chofer_id)) else 30
+        confirmar_pago_chofer(chofer_id, dias=dias)
 
         # Acreditar comision al embajador si aplica
-        chofer = get_chofer(chofer_id)
         if chofer and chofer.get('referido_por'):
             embajador = get_embajador_por_codigo(chofer['referido_por'])
             if embajador:

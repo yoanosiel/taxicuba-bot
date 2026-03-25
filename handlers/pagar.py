@@ -25,8 +25,8 @@ async def pagar_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         conn.close()
 
         if pago and pago['fecha_pago']:
-            fecha_pago = datetime.fromisoformat(pago['fecha_pago'])
-            dias_restantes = 30 - (datetime.now() - fecha_pago).days
+            fecha_vence = datetime.fromisoformat(pago['fecha_pago'])
+            dias_restantes = (fecha_vence - datetime.now()).days
             await update.message.reply_text(
                 f"Tu cuenta esta activa.\n\n"
                 f"Tu cuota vence en {dias_restantes} dias.\n\n"

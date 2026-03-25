@@ -315,18 +315,20 @@ def rechazar_chofer(telegram_id: int):
     conn.close()
 
 
-def confirmar_pago_chofer(telegram_id: int):
-    """Confirma pago y activa chofer por 30 dias"""
-    from datetime import datetime
+def confirmar_pago_chofer(telegram_id: int, dias: int = 30):
+    """Confirma pago y activa chofer por N dias (30 normal, 60 si referido)"""
+    from datetime import datetime, timedelta
+    now = datetime.now()
+    fecha_vence = (now + timedelta(days=dias)).isoformat()
     conn = get_conn()
     conn.execute("""
         UPDATE choferes SET estado='activo', fecha_pago=?
         WHERE telegram_id=?
-    """, (datetime.now().isoformat(), telegram_id))
+    """, (fecha_vence, telegram_id))
     conn.execute("""
         INSERT INTO pagos (chofer_id, monto, fecha_pago, mes_pagado, confirmado_por)
         VALUES (?, 250, ?, ?, 'admin')
-    """, (telegram_id, datetime.now().isoformat(), datetime.now().strftime("%Y-%m")))
+    """, (telegram_id, now.isoformat(), now.strftime("%Y-%m")))
     conn.commit()
     conn.close()
 
