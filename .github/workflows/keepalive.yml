@@ -1,0 +1,28 @@
+name: Keep Bot Alive
+
+on:
+  schedule:
+    - cron: '0 */8 * * *'
+  workflow_dispatch:
+
+jobs:
+  restart-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.PYTHONANYWHERE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check and restart bot
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.PYTHONANYWHERE_USER }}@${{ secrets.PYTHONANYWHERE_HOST }} '
+            if ! pgrep -f bot.py > /dev/null; then
+              echo "Bot caido, arrancando..."
+              ~/arrancar_bot.sh
+            else
+              echo "Bot corriendo OK"
+            fi
+          '
