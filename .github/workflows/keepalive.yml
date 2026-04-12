@@ -14,7 +14,6 @@ jobs:
           curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
             -X POST \
-            --data-urlencode "input=pgrep -f bot.py || ~/arrancar_bot.sh
-" \
+            -d "input=pgrep -f bot.py || ~/arrancar_bot.sh%0A" \
             https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/46276596/send_input/
           echo "Comando enviado OK"
