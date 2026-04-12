@@ -9,20 +9,10 @@ jobs:
   restart-bot:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup SSH
+      - name: Check and restart bot via API
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.PYTHONANYWHERE_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Check and restart bot
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.PYTHONANYWHERE_USER }}@${{ secrets.PYTHONANYWHERE_HOST }} '
-            if ! pgrep -f bot.py > /dev/null; then
-              echo "Bot caido, arrancando..."
-              ~/arrancar_bot.sh
-            else
-              echo "Bot corriendo OK"
-            fi
-          '
+          curl -s -X POST \
+            --data-urlencode "command=pgrep -f bot.py || (cd ~/taxicuba-bot && pkill -f bot.py; nohup python bot.py > ~/bot.log 2>&1 &)" \
+            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/ \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print('Consola creada:', d.get('id', 'error'))"
