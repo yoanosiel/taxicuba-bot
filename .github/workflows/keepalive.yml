@@ -11,8 +11,7 @@ jobs:
     steps:
       - name: Check and restart bot via API
         run: |
-          curl -s -X POST \
-            --data-urlencode "command=pgrep -f bot.py || (cd ~/taxicuba-bot && pkill -f bot.py; nohup python bot.py > ~/bot.log 2>&1 &)" \
+          RESPONSE=$(curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/ \
-            | python3 -c "import sys,json; d=json.load(sys.stdin); print('Consola creada:', d.get('id', 'error'))"
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/)
+          echo "Respuesta: $RESPONSE"
