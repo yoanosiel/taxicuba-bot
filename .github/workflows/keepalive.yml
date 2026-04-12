@@ -9,9 +9,12 @@ jobs:
   restart-bot:
     runs-on: ubuntu-latest
     steps:
-      - name: Check and restart bot via API
+      - name: Restart bot via PythonAnywhere API
         run: |
-          RESPONSE=$(curl -s \
+          curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/)
-          echo "Respuesta: $RESPONSE"
+            -X POST \
+            --data-urlencode "input=pgrep -f bot.py || ~/arrancar_bot.sh
+" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/46276596/send_input/
+          echo "Comando enviado OK"
