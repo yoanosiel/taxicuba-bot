@@ -11,11 +11,43 @@ jobs:
     steps:
       - name: Restart bot via PythonAnywhere API
         run: |
+          # Obtener consolas existentes y eliminarlas
+          CONSOLES=$(curl -s \
+            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/)
+          
+          echo "$CONSOLES" | python3 -c "
+          import sys, json, urllib.request, urllib.error
+          consoles = json.load(sys.stdin)
+          for c in consoles:
+              req = urllib.request.Request(
+                  f'https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/{c[\"id\"]}/',
+                  method='DELETE',
+                  headers={'Authorization': 'Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}'}
+              )
+              try:
+                  urllib.request.urlopen(req)
+                  print(f'Consola {c[\"id\"]} eliminada')
+              except Exception as e:
+                  print(f'Error eliminando {c[\"id\"]}: {e}')
+          "
+          
+          # Crear nueva consola y enviar comando
+          RESULT=$(curl -s \
+            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
+            -X POST \
+            -d "executable=bash" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/)
+          
+          CONSOLE_ID=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "Nueva consola: $CONSOLE_ID"
+          
+          sleep 5
+          
           curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
             -X POST \
-            -d "command=pgrep -f bot.py || cd ~/taxicuba-bot && nohup python bot.py > ~/bot.log 2>&1 &" \
-            -d "working_directory=/home/osielgarcia" \
-            -d "expiry=600" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/schedule/
+            -d "input=pgrep -f bot.py || ~/arrancar_bot.sh%0A" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/$CONSOLE_ID/send_input/
+          
           echo "Comando enviado OK"
