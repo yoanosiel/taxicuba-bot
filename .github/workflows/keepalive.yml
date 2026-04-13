@@ -1,51 +1,19 @@
-name: Keep Bot Alive
+name: Keep Bot Alive 
 
 on:
-  schedule:
-    - cron: '0 */8 * * *'
-  workflow_dispatch:
+  schedule:
+    - cron: '0 */8 * * *'
+  workflow_dispatch: 
 
 jobs:
-  restart-bot:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restart bot via PythonAnywhere API
-        run: |
-          CONSOLES=$(curl -s \
-            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/)
-          
-          echo "$CONSOLES" | python3 -c "
-          import sys, json, urllib.request
-          consoles = json.load(sys.stdin)
-          for c in consoles:
-              req = urllib.request.Request(
-                  f'https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/{c[\"id\"]}/',
-                  method='DELETE',
-                  headers={'Authorization': 'Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}'}
-              )
-              try:
-                  urllib.request.urlopen(req)
-                  print(f'Consola {c[\"id\"]} eliminada')
-              except Exception as e:
-                  print(f'Error: {e}')
-          "
-          
-          RESULT=$(curl -s \
-            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
-            -X POST \
-            -d "executable=bash" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/)
-          
-          CONSOLE_ID=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          echo "Nueva consola: $CONSOLE_ID"
-          
-          sleep 15
-          
-          curl -s \
-            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
-            -X POST \
-            -d "input=pgrep -f bot.py || ~/arrancar_bot.sh%0A" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/$CONSOLE_ID/send_input/
-          
-          echo "Comando enviado OK"
+  restart-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restart bot via PythonAnywhere API
+        run: |
+          curl -s \
+            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
+            -X POST \
+            -d "input=pgrep -f bot.py || ~/arrancar_bot.sh%0A" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/46295993/send_input/
+          echo "Comando enviado OK"
