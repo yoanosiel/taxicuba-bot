@@ -11,13 +11,12 @@ jobs:
     steps:
       - name: Restart bot via PythonAnywhere API
         run: |
-          # Obtener consolas existentes y eliminarlas
           CONSOLES=$(curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
             https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/)
           
           echo "$CONSOLES" | python3 -c "
-          import sys, json, urllib.request, urllib.error
+          import sys, json, urllib.request
           consoles = json.load(sys.stdin)
           for c in consoles:
               req = urllib.request.Request(
@@ -29,10 +28,9 @@ jobs:
                   urllib.request.urlopen(req)
                   print(f'Consola {c[\"id\"]} eliminada')
               except Exception as e:
-                  print(f'Error eliminando {c[\"id\"]}: {e}')
+                  print(f'Error: {e}')
           "
           
-          # Crear nueva consola y enviar comando
           RESULT=$(curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
             -X POST \
@@ -42,7 +40,7 @@ jobs:
           CONSOLE_ID=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
           echo "Nueva consola: $CONSOLE_ID"
           
-          sleep 5
+          sleep 15
           
           curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
