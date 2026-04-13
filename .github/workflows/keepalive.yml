@@ -14,6 +14,8 @@ jobs:
           curl -s \
             -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
             -X POST \
-            -d "input=pgrep -f bot.py || ~/arrancar_bot.sh%0A" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/46276596/send_input/
+            -d "command=pgrep -f bot.py || cd ~/taxicuba-bot && nohup python bot.py > ~/bot.log 2>&1 &" \
+            -d "working_directory=/home/osielgarcia" \
+            -d "expiry=600" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/schedule/
           echo "Comando enviado OK"
