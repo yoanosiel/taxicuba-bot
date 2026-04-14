@@ -1,19 +1,19 @@
-name: Keep Bot Alive 
+name: Keep Bot Alive
 
 on:
-  schedule:
-    - cron: '0 */8 * * *'
-  workflow_dispatch: 
+  schedule:
+    - cron: '0 */8 * * *'
+  workflow_dispatch:
 
 jobs:
-  restart-bot:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restart bot via PythonAnywhere API
-        run: |
-          curl -s \
-            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
-            -X POST \
-            -d "input=pgrep -f bot.py || ~/arrancar_bot.sh%0A" \
-            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/46295993/send_input/
-          echo "Comando enviado OK"
+  restart-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restart bot
+        run: |
+          curl -s \
+            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
+            -X POST \
+            -d "input=pgrep -f bot.py || ~/arrancar_bot.sh%0A" \
+            https://www.pythonanywhere.com/api/v0/user/osielgarcia/consoles/46295993/send_input/
+          echo "OK"
